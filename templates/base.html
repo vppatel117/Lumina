@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lumina Library</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <header class="app-header">
+        <div class="logo">Lumina</div>
+        <nav>
+            <a href="{{ url_for('catalog') }}">Catalog</a>
+            {% if current_user.is_authenticated %}
+                {% if current_user.is_librarian %}
+                    <a href="{{ url_for('dashboard_librarian') }}">Librarian</a>
+                {% else %}
+                    <a href="{{ url_for('dashboard_user') }}">My Shelf</a>
+                {% endif %}
+                <form method="post" action="{{ url_for('logout') }}" class="inline-form">
+                    <button type="submit" class="ghost">Sign out</button>
+                </form>
+            {% else %}
+                <a href="{{ url_for('login') }}">Sign in</a>
+            {% endif %}
+        </nav>
+    </header>
+
+    <main class="container">
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                <div class="flash-stack">
+                    {% for category, message in messages %}
+                        <div class="flash {{ category }}">{{ message }}</div>
+                    {% endfor %}
+                </div>
+            {% endif %}
+        {% endwith %}
+
+        {% block content %}{% endblock %}
+    </main>
+
+    <footer class="app-footer">
+        <p>Built with care for modern libraries.</p>
+    </footer>
+</body>
+</html>

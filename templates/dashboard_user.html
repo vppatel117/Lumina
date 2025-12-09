@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+{% block content %}
+<section class="page-heading">
+    <div>
+        <h1>Welcome back, {{ current_user.name.split(' ')[0] }}.</h1>
+        <p class="muted">Track what you are reading and return with a click.</p>
+    </div>
+</section>
+
+<section class="table card">
+    <div class="row head">
+        <span>Book</span>
+        <span>Checked out</span>
+        <span>Due</span>
+        <span>Status</span>
+        <span></span>
+    </div>
+    {% for loan in loans %}
+    <div class="row">
+        <span>{{ loan.book.title }}</span>
+        <span>{{ loan.checkout_date.strftime('%b %d, %Y') }}</span>
+        <span>{{ loan.due_date.strftime('%b %d, %Y') }}</span>
+        <span class="{{ 'danger' if loan.is_overdue else 'success' }}">
+            {{ 'Overdue' if loan.is_overdue else 'On time' }}
+        </span>
+        <span>
+            {% if not loan.returned_date %}
+            <form action="{{ url_for('return_book', loan_id=loan.id) }}" method="post">
+                <button type="submit">Return</button>
+            </form>
+            {% else %}
+                Returned {{ loan.returned_date.strftime('%b %d, %Y') }}
+            {% endif %}
+        </span>
+    </div>
+    {% else %}
+        <p>You have no active loans. Visit the <a href="{{ url_for('catalog') }}">catalog</a> to find your next read.</p>
+    {% endfor %}
+</section>
+{% endblock %}

@@ -1,0 +1,58 @@
+{% extends "base.html" %}
+{% block content %}
+<section class="page-heading">
+    <div>
+        <h1>Explore the Collection</h1>
+        <p class="muted">Search by title or author. Checkout instantly when signed in.</p>
+    </div>
+    <form class="search" method="get">
+        <input type="text" name="q" placeholder="Search books" value="{{ query }}">
+        <button type="submit">Search</button>
+    </form>
+</section>
+
+<section class="grid">
+    {% for book in books %}
+    <article class="card">
+        <header>
+            <h2>{{ book.title }}</h2>
+            <p class="muted">{{ book.author }}</p>
+        </header>
+        <p>{{ book.available_copies }} of {{ book.total_copies }} copies available</p>
+        {% if current_user.is_authenticated %}
+            {% if book.available_copies > 0 %}
+                <form action="{{ url_for('checkout_book', book_id=book.id) }}" method="post">
+                    <button type="submit" class="primary">Checkout</button>
+                </form>
+            {% else %}
+                <button class="ghost" disabled>All copies out</button>
+            {% endif %}
+        {% else %}
+            <a class="ghost" href="{{ url_for('login') }}">Sign in to borrow</a>
+        {% endif %}
+    </article>
+    {% else %}
+        <p>No books match that search.</p>
+    {% endfor %}
+</section>
+
+{% if external_books %}
+<section class="card external-suggestions">
+    <h2>More from partner catalogs</h2>
+    <p class="muted">We can source these titles through external distributors.</p>
+    <ul class="external-list">
+        {% for title in external_books %}
+        <li>
+            <div>
+                <strong>{{ title.title }}</strong>
+                <span class="muted">{{ title.author }}</span>
+            </div>
+            {% if title.source_url %}
+            <a href="{{ title.source_url }}" target="_blank" rel="noreferrer">View source</a>
+            {% endif %}
+        </li>
+        {% endfor %}
+    </ul>
+</section>
+{% endif %}
+{% endblock %}
