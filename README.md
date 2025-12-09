@@ -49,6 +49,11 @@ SECRET_KEY=your_secret_key
 python main.py
 ```
 
+6. run this application in terminal using:
+
+flask --app main run
+
+
 The application will be available at `http://localhost:5000`
 
 ## Project Structure
